@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ece9e3;--w:#ffffff;--tx:#1a1a1a;--sub:#6b6560;--mu:#a09a93;
+  --ln:rgba(26,26,26,0.07);--ln2:rgba(26,26,26,0.04);
+  --ac:#1B8FD4;--ac2:rgba(27,143,212,0.09);--ac3:rgba(27,143,212,0.18);
+  --r:.55em;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:#fff;
+  font-family:"DM Sans",ui-sans-serif,sans-serif;
+  -webkit-font-smoothing:antialiased;color:var(--tx)}
+.card{width:100%;height:100%;background:var(--bg)}
+</style>
+</head>
+<body>
+
+<style>
+.card{display:flex;align-items:center;justify-content:center;padding:8%;gap:4%}
+.col{flex:1;display:flex;flex-direction:column;gap:.7em;min-width:0}
+.col.offset{margin-top:14%}
+.card.stacked{flex-direction:column;align-items:stretch;gap:.6em}
+.card.stacked .col{flex:unset}
+.card.stacked .col.offset{margin-top:0}
+.row{
+  background:var(--w);border-radius:var(--r);
+  padding:.7em .85em;display:flex;align-items:center;gap:.65em;
+  border:1px solid var(--ln2);will-change:opacity,transform;
+}
+.ico{width:2em;height:2em;border-radius:.35em;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ib{background:var(--ac2)}.ig{background:rgba(52,199,89,.1)}
+.io{background:rgba(255,149,0,.1)}.id{background:var(--ln2)}
+.info{flex:1;min-width:0}
+.t1{font-size:.82em;font-weight:500;color:var(--tx);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t2{font-size:.68em;color:var(--mu);display:block;margin-top:.08em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pip{width:.42em;height:.42em;border-radius:50%;flex-shrink:0;margin-left:auto}
+.pb{background:var(--ac)}.pg{background:#34C759}.po{background:#FF9500}
+</style>
+
+<div class="card" id="card">
+  <div class="col" id="c0">
+    <div class="row">
+      <div class="ico ib">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <rect x="1" y="4" width="12" height="9" rx="1.5" stroke="#1B8FD4" stroke-width="1.3" fill="none"/>
+          <path d="M5 4V3a2 2 0 014 0v1" stroke="#1B8FD4" stroke-width="1.3" stroke-linecap="round"/>
+          <circle cx="7" cy="8.5" r="1" fill="#1B8FD4"/>
+        </svg>
+      </div>
+      <div class="info"><span class="t1">Mietminderungen</span><span class="t2">§ 536 BGB</span></div>
+      <div class="pip pb"></div>
+    </div>
+    <div class="row">
+      <div class="ico io">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <rect x="2" y="1.5" width="10" height="11" rx="1.5" stroke="#FF9500" stroke-width="1.3" fill="none"/>
+          <line x1="4.5" y1="5" x2="9.5" y2="5" stroke="#FF9500" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="4.5" y1="7.5" x2="9.5" y2="7.5" stroke="#FF9500" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="4.5" y1="10" x2="7.5" y2="10" stroke="#FF9500" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="info"><span class="t1">Nebenkostenabrechnung</span><span class="t2">Widerspruch</span></div>
+      <div class="pip po"></div>
+    </div>
+  </div>
+  <div class="col offset" id="c1">
+    <div class="row">
+      <div class="ico id">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M7 1.5L12 4v3c0 3-2.5 4.8-5 5.5C4.5 12.3 2 10.5 2 7.5V4L7 1.5z" stroke="#6b6560" stroke-width="1.3" fill="none"/>
+          <path d="M5 7l1.5 1.5L9 5" stroke="#6b6560" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="info"><span class="t1">Schimmel</span><span class="t2">Ursache</span></div>
+      <div class="pip pb"></div>
+    </div>
+    <div class="row">
+      <div class="ico ig">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <circle cx="7" cy="7" r="5.5" stroke="#34C759" stroke-width="1.3" fill="none"/>
+          <path d="M5 7h4M7 5v4" stroke="#34C759" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="info"><span class="t1">Kaution</span><span class="t2">Einbehalt</span></div>
+      <div class="pip pg"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+function scaleFont(base){
+  document.documentElement.style.fontSize =
+    Math.max(Math.min(document.body.clientWidth/base,22),9)+"px";
+}
+
+scaleFont(24);
+window.addEventListener("resize",()=>scaleFont(24));
+const card=document.getElementById("card");
+function layout(){card.classList.toggle("stacked",document.body.clientWidth<260)}
+layout();window.addEventListener("resize",layout);
+
+const rows=[...document.querySelectorAll(".row")];
+const S=200, H=2800, DI=600, DO=450;
+
+function run(){
+  rows.forEach(r=>{r.style.transition="none";r.style.opacity="0";r.style.transform="translateY(.5em)"});
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    rows.forEach((r,i)=>setTimeout(()=>{
+      r.style.transition=`opacity ${DI}ms cubic-bezier(.4,0,.2,1),transform ${DI}ms cubic-bezier(.4,0,.2,1)`;
+      r.style.opacity="1";r.style.transform="translateY(0)";
+    },i*S));
+    const all=(rows.length-1)*S+DI;
+    setTimeout(()=>{
+      rows.forEach(r=>{
+        r.style.transition=`opacity ${DO}ms ease,transform ${DO}ms ease`;
+        r.style.opacity="0";r.style.transform="translateY(-.3em)";
+      });
+      setTimeout(run,DO+100);
+    },all+H);
+  }));
+}
+setTimeout(run,180);
+</script>
+</body></html>

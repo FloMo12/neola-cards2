@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ece9e3;--w:#ffffff;--tx:#1a1a1a;--sub:#6b6560;--mu:#a09a93;
+  --ln:rgba(26,26,26,0.07);--ln2:rgba(26,26,26,0.04);
+  --ac:#1B8FD4;--ac2:rgba(27,143,212,0.09);--ac3:rgba(27,143,212,0.18);
+  --r:.55em;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:#fff;
+  font-family:"DM Sans",ui-sans-serif,sans-serif;
+  -webkit-font-smoothing:antialiased;color:var(--tx)}
+.card{width:100%;height:100%;background:var(--bg)}
+</style>
+</head>
+<body>
+
+<style>
+.card{display:flex;flex-direction:column;justify-content:center;padding:5.5% 6%;gap:.38em}
+.row{
+  display:flex;align-items:center;gap:.65em;
+  background:var(--w);border-radius:var(--r);
+  padding:.58em .7em;border:1px solid var(--ln2);
+  will-change:opacity,transform;
+}
+.ico{width:1.9em;height:1.9em;border-radius:.3em;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ib{background:var(--ac2)}.ig{background:rgba(52,199,89,.1)}
+.id{background:var(--ln2)}.ifl{background:rgba(26,26,26,.03)}
+.meta{flex:1;min-width:0}
+.t1{font-size:.74em;font-weight:500;color:var(--tx);display:block}
+.t2{font-size:.62em;color:var(--mu);display:block;margin-top:.06em}
+.chk{
+  width:1.15em;height:1.15em;border-radius:50%;background:#34C759;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-left:auto;will-change:opacity,transform;
+}
+.chk svg{width:52%;height:52%}
+</style>
+
+<div class="card">
+  <div class="row" id="r0">
+    <div class="ico ib">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+        <path d="M6.5 1L11 3.2v3.3c0 2.8-2.2 4.3-4.5 5-2.3-.7-4.5-2.2-4.5-5V3.2L6.5 1z" stroke="#1B8FD4" stroke-width="1.2" fill="none"/>
+        <path d="M4.5 6.5l1.4 1.4L9 4.5" stroke="#1B8FD4" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="meta"><span class="t1">Zugriff authentifiziert</span></div>
+    <div class="chk" id="c0"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  </div>
+  <div class="row" id="r1">
+    <div class="ico id">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+        <circle cx="6.5" cy="6.5" r="5" stroke="#6b6560" stroke-width="1.2" fill="none"/>
+        <line x1="6.5" y1="4" x2="6.5" y2="7" stroke="#6b6560" stroke-width="1.3" stroke-linecap="round"/>
+        <circle cx="6.5" cy="9" r=".7" fill="#6b6560"/>
+      </svg>
+    </div>
+    <div class="meta"><span class="t1">Aktion protokolliert</span></div>
+    <div class="chk" id="c1"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  </div>
+  <div class="row" id="r2">
+    <div class="ico ig">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+        <rect x="3.5" y="6" width="6" height="5.5" rx="1" stroke="#34C759" stroke-width="1.2" fill="none"/>
+        <path d="M5 6V4.5a1.5 1.5 0 013 0V6" stroke="#34C759" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+        <circle cx="6.5" cy="8.5" r=".7" fill="#34C759"/>
+      </svg>
+    </div>
+    <div class="meta"><span class="t1">Vorgang verschlüsselt</span></div>
+    <div class="chk" id="c2"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  </div>
+  <div class="row" id="r3">
+    <div class="ico ifl">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+        <rect x="1.5" y="3" width="10" height="7" rx="1.2" stroke="#a09a93" stroke-width="1.2" fill="none"/>
+        <line x1="1.5" y1="5.5" x2="11.5" y2="5.5" stroke="#a09a93" stroke-width="1.2"/>
+        <circle cx="4" cy="8.2" r=".6" fill="#a09a93"/>
+      </svg>
+    </div>
+    <div class="meta"><span class="t1">In Deutschland gespeichert</span></div>
+    <div class="chk" id="c3"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  </div>
+</div>
+
+<script>
+
+function scaleFont(base){
+  document.documentElement.style.fontSize =
+    Math.max(Math.min(document.body.clientWidth/base,22),9)+"px";
+}
+
+scaleFont(22);window.addEventListener("resize",()=>scaleFont(22));
+const rows=[0,1,2,3].map(i=>document.getElementById("r"+i));
+const checks=[0,1,2,3].map(i=>document.getElementById("c"+i));
+const S=200, CO=420, H=2800, DI=550, DO=400;
+function run(){
+  rows.forEach(r=>{r.style.transition="none";r.style.opacity="0";r.style.transform="translateY(.45em)"});
+  checks.forEach(c=>{c.style.transition="none";c.style.opacity="0";c.style.transform="scale(.3)"});
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    rows.forEach((r,i)=>setTimeout(()=>{
+      r.style.transition=`opacity ${DI}ms cubic-bezier(.4,0,.2,1),transform ${DI}ms cubic-bezier(.4,0,.2,1)`;
+      r.style.opacity="1";r.style.transform="translateY(0)";
+    },i*S));
+    checks.forEach((c,i)=>setTimeout(()=>{
+      c.style.transition="opacity .38s ease,transform .42s cubic-bezier(.34,1.4,.64,1)";
+      c.style.opacity="1";c.style.transform="scale(1)";
+    },i*S+CO));
+    const all=3*S+CO+550;
+    setTimeout(()=>{
+      rows.forEach(r=>{r.style.transition=`opacity ${DO}ms ease,transform ${DO}ms ease`;r.style.opacity="0";r.style.transform="translateY(-.3em)"});
+      checks.forEach(c=>{c.style.transition=`opacity ${DO}ms ease`;c.style.opacity="0"});
+      setTimeout(run,DO+100);
+    },all+H);
+  }));
+}
+setTimeout(run,180);
+</script>
+</body></html>

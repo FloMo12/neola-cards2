@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ece9e3;--w:#ffffff;--tx:#1a1a1a;--sub:#6b6560;--mu:#a09a93;
+  --ln:rgba(26,26,26,0.07);--ln2:rgba(26,26,26,0.04);
+  --ac:#1B8FD4;--ac2:rgba(27,143,212,0.09);
+}
+html,body{width:100%;height:100%;overflow:hidden;background:#fff;
+  font-family:"DM Sans",ui-sans-serif,sans-serif;
+  -webkit-font-smoothing:antialiased;color:var(--tx)}
+.card{width:100%;height:100%;background:var(--bg)}
+</style>
+</head>
+<body>
+
+<style>
+.card{display:flex;flex-direction:column;justify-content:center;padding:5.5% 7%;gap:0}
+
+.step{display:flex;align-items:center;gap:.55em;will-change:opacity,transform}
+
+.num{
+  width:1.6em;height:1.6em;border-radius:50%;
+  background:var(--w);border:1.5px solid var(--ln);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.62em;font-weight:600;color:var(--mu);
+  flex-shrink:0;
+  transition:background .45s cubic-bezier(.4,0,.2,1),
+             border-color .45s ease,color .45s ease,box-shadow .45s ease;
+}
+.step.active .num{
+  background:var(--ac);border-color:var(--ac);color:#fff;
+  box-shadow:0 2px 10px rgba(27,143,212,.28);
+}
+.step.done .num{background:var(--tx);border-color:var(--tx);color:#fff}
+
+.bar{
+  flex:1;background:var(--w);border-radius:.48em;
+  padding:.52em .72em;border:1px solid var(--ln2);
+  display:flex;align-items:center;justify-content:space-between;gap:.4em;
+  transition:border-color .45s ease,box-shadow .45s ease,
+             transform .45s cubic-bezier(.4,0,.2,1);
+  transform-origin:left center;
+}
+.step.active .bar{
+  border-color:rgba(27,143,212,.22);
+  box-shadow:0 2px 14px rgba(27,143,212,.09);
+  transform:scaleX(1.012);
+}
+.step.done .bar{border-color:var(--ln2);box-shadow:none;transform:none}
+
+.lbl{font-size:.72em;font-weight:500;color:var(--mu);transition:color .45s ease}
+.step.active .lbl,.step.done .lbl{color:var(--tx)}
+
+.bdg{
+  font-size:.6em;font-weight:500;border-radius:20px;
+  padding:.24em .72em;white-space:nowrap;flex-shrink:0;
+  opacity:0;transform:translateX(5px);
+  transition:opacity .5s cubic-bezier(.4,0,.2,1),transform .5s cubic-bezier(.4,0,.2,1);
+}
+.step.active .bdg,.step.done .bdg{opacity:1;transform:none}
+
+.ba{background:var(--ac2);color:var(--ac)}
+.br{background:rgba(52,199,89,.1);color:#1e9e40}
+.bs{background:rgba(255,149,0,.1);color:#b06500}
+.bl{background:var(--ln2);color:var(--mu)}
+
+.conn{display:flex;align-items:center;padding-left:.8em;height:.6em}
+.vl-track{width:1.5px;height:100%;background:var(--ln);border-radius:2px;position:relative;overflow:hidden}
+.vl-fill{position:absolute;top:0;left:0;width:100%;height:0%;background:var(--ac);border-radius:2px;transition:height .55s cubic-bezier(.4,0,.2,1)}
+.conn.filled .vl-fill{height:100%}
+
+.card{opacity:0;transition:opacity .7s ease}
+.card.visible{opacity:1}
+</style>
+
+<div class="card" id="card">
+  <div class="step" id="s0">
+    <div class="num">1</div>
+    <div class="bar"><span class="lbl">Sonderfall erkannt</span><span class="bdg br">Regelbasiert</span></div>
+  </div>
+  <div class="conn" id="c0"><div class="vl-track"><div class="vl-fill"></div></div></div>
+
+  <div class="step" id="s1">
+    <div class="num">2</div>
+    <div class="bar"><span class="lbl">Grenzwert geprüft</span><span class="bdg ba">Automatisch</span></div>
+  </div>
+  <div class="conn" id="c1"><div class="vl-track"><div class="vl-fill"></div></div></div>
+
+  <div class="step" id="s2">
+    <div class="num">3</div>
+    <div class="bar"><span class="lbl">Mensch entscheidet</span><span class="bdg bs">Steuerbar</span></div>
+  </div>
+  <div class="conn" id="c2"><div class="vl-track"><div class="vl-fill"></div></div></div>
+
+  <div class="step" id="s3">
+    <div class="num">4</div>
+    <div class="bar"><span class="lbl">Alles protokolliert</span><span class="bdg bl">Auditierbar</span></div>
+  </div>
+</div>
+
+<script>
+function scaleFont(b){
+  document.documentElement.style.fontSize=
+    Math.max(Math.min(document.body.clientWidth/b,22),9)+"px";
+}
+scaleFont(38);window.addEventListener("resize",()=>scaleFont(38));
+
+const card  = document.getElementById("card");
+const steps = [0,1,2,3].map(i=>document.getElementById("s"+i));
+const conns = [0,1,2].map(i=>document.getElementById("c"+i));
+
+const STEP_DUR  = 750;
+const CONN_WAIT = 280;
+const HOLD_END  = 1400;
+const FADE_OUT  = 650;
+const LOOP_GAP  = 500;
+
+function clearAll(){
+  card.classList.remove("visible");
+  steps.forEach(s=>s.classList.remove("active","done"));
+  conns.forEach(c=>c.classList.remove("filled"));
+}
+
+function activate(i, done){
+  if(i>0) steps[i-1].classList.replace("active","done");
+  steps[i].classList.add("active");
+  if(i<conns.length) setTimeout(()=>conns[i].classList.add("filled"),CONN_WAIT);
+  const next=i+1;
+  if(next<steps.length){
+    setTimeout(()=>activate(next,done),STEP_DUR);
+  } else {
+    setTimeout(()=>{steps[i].classList.replace("active","done");setTimeout(done,HOLD_END)},STEP_DUR);
+  }
+}
+
+function run(){
+  clearAll();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    card.classList.add("visible");
+    setTimeout(()=>{
+      activate(0,()=>{
+        card.classList.remove("visible");
+        setTimeout(run,FADE_OUT+LOOP_GAP);
+      });
+    },650);
+  }));
+}
+setTimeout(run,250);
+</script>
+</body></html>

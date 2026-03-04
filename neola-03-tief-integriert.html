@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#ece9e3;
+  font-family:"DM Sans",ui-sans-serif,sans-serif;-webkit-font-smoothing:antialiased}
+</style>
+</head>
+<body>
+<canvas id="c" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+<script>
+const CVS = document.getElementById('c');
+const ctx = CVS.getContext('2d');
+
+const AC='#1B8FD4', W='#ffffff', SUB='#6b6560', MU='#a09a93';
+const acA = a => `rgba(27,143,212,${a})`;
+
+const NODES = [
+  {label:'Outlook',      sub:'E-Mail',     bg:'#0078D4', angle:-90},
+  {label:'ERP',          sub:'Stammdaten', bg:'#1B3A6B', angle:0  },
+  {label:'Ticketsystem', sub:'Vorgänge',   bg:'#1a1a1a', angle:90 },
+  {label:'DMS',          sub:'Dokumente',  bg:'#E8913A', angle:180},
+];
+
+let W2,H2,CX,CY,R1,R2,R3,NODE_R,CTR_R;
+let t=0, phaseT=0, phase='reveal', globalA=0;
+const nState = NODES.map(()=>({rev:0,lblA:0}));
+const easeOut = x => 1-Math.pow(1-x,3);
+const easeIO  = x => x<.5 ? 2*x*x : 1-Math.pow(-2*x+2,2)/2;
+
+function resize(){
+  CVS.width  = CVS.offsetWidth  * devicePixelRatio;
+  CVS.height = CVS.offsetHeight * devicePixelRatio;
+  W2=CVS.width; H2=CVS.height; CX=W2/2; CY=H2/2;
+  const S = Math.min(W2,H2) * 0.54;
+  R1=S*0.17; R2=S*0.31; R3=S*0.44;
+  NODE_R=S*0.088; CTR_R=S*0.105;
+}
+resize(); window.addEventListener('resize',resize);
+
+const nodePos = angle => {
+  const r=(angle-90)*Math.PI/180;
+  return {x:CX+R3*Math.cos(r), y:CY+R3*Math.sin(r)};
+};
+
+function drawIcon(ni,cx,cy,r){
+  ctx.save(); ctx.translate(cx,cy);
+  ctx.strokeStyle='#fff'; ctx.lineWidth=r*0.075;
+  ctx.lineCap='round'; ctx.lineJoin='round';
+  const s=r*0.40;
+  if(ni===0){ // Envelope
+    ctx.beginPath(); ctx.roundRect(-s,-s*0.65,s*2,s*1.3,s*0.13); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-s,-s*0.65); ctx.lineTo(0,s*0.15); ctx.lineTo(s,-s*0.65); ctx.stroke();
+  } else if(ni===1){ // Grid
+    const g=s*0.40;
+    [[-g,-g],[g,-g],[-g,g],[g,g]].forEach(([ox,oy])=>{
+      ctx.beginPath(); ctx.roundRect(ox-g*0.7,oy-g*0.7,g*1.4,g*1.4,g*0.16); ctx.stroke();
+    });
+  } else if(ni===2){ // Document + lines
+    ctx.beginPath(); ctx.roundRect(-s,-s,s*2,s*2,s*0.17); ctx.stroke();
+    [-s*0.33,0,s*0.33].forEach(oy=>{
+      ctx.beginPath(); ctx.moveTo(-s*0.48,oy); ctx.lineTo(s*0.48,oy); ctx.stroke();
+    });
+  } else { // Doc with fold
+    ctx.beginPath();
+    ctx.moveTo(-s*0.56,-s); ctx.lineTo(s*0.16,-s);
+    ctx.lineTo(s*0.56,-s*0.50); ctx.lineTo(s*0.56,s);
+    ctx.lineTo(-s*0.56,s); ctx.closePath(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(s*0.16,-s); ctx.lineTo(s*0.16,-s*0.50); ctx.lineTo(s*0.56,-s*0.50); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-s*0.27,s*0.10); ctx.lineTo(s*0.30,s*0.10); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-s*0.27,s*0.42); ctx.lineTo(s*0.18,s*0.42); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawRR(cx,cy,w,h,r,fill){
+  ctx.beginPath(); ctx.roundRect(cx-w/2,cy-h/2,w,h,r);
+  ctx.fillStyle=fill; ctx.fill();
+}
+
+function drawLogo(cx,cy,r){
+  const sc=(r*1.7)/214;
+  ctx.save();
+  ctx.translate(cx-164*sc/2, cy-214*sc/2);
+  ctx.scale(sc,sc); ctx.fillStyle=AC;
+  ctx.fill(new Path2D("M0 106.508H54.6592V2.00205C54.6592 0.222349 56.8109 -0.669474 58.0693 0.588964L58.2314 0.751074L163.987 106.508H109.328V211.014C109.328 212.793 107.176 213.685 105.918 212.427L0 106.508Z"));
+  ctx.restore();
+}
+
+let last=null;
+function draw(ts){
+  if(!last) last=ts;
+  const dt=Math.min((ts-last)/1000,0.05); last=ts; t+=dt; phaseT+=dt;
+
+  // Phase durations: reveal 2.4s, live 4.5s, fadeout 1.2s, gap 0.6s
+  if(phase==='reveal'){
+    globalA=Math.min(1, easeIO(Math.min(1,phaseT/0.8)));
+    if(phaseT>2.4){phase='live';phaseT=0;}
+  } else if(phase==='live'){
+    globalA=1;
+    if(phaseT>4.5){phase='fadeout';phaseT=0;}
+  } else {
+    globalA=Math.max(0, 1-easeIO(Math.min(1,phaseT/1.0)));
+    if(phaseT>1.8){phase='reveal';phaseT=0;t=0;}
+  }
+
+  // Node reveal — staggered, each takes 0.8s, offset 0.32s apart
+  NODES.forEach((_,i)=>{
+    const ns=nState[i], st=i*0.32;
+    if(phase==='reveal'){
+      ns.rev  = easeOut(Math.max(0,Math.min(1,(phaseT-st)/0.8)));
+      ns.lblA = easeOut(Math.max(0,Math.min(1,(phaseT-st-0.45)/0.6)));
+    } else if(phase==='live'){
+      ns.rev=ns.lblA=1;
+    }
+  });
+
+  ctx.clearRect(0,0,W2,H2);
+  ctx.save();
+  ctx.globalAlpha=globalA;
+
+  // ── Rings: slow independent breathing ~16s each ──────────────
+  [R1,R2,R3].forEach((r,ri)=>{
+    const breath=Math.sin(t*0.32+ri*2.3)*0.5+0.5;
+    ctx.beginPath(); ctx.arc(CX,CY,r,0,Math.PI*2);
+    ctx.strokeStyle=acA(0.18+breath*0.24);
+    ctx.lineWidth=1.2; ctx.stroke();
+  });
+
+  // ── Lines draw from center outward ──────────────────────────
+  NODES.forEach((_,i)=>{
+    const ns=nState[i]; if(ns.rev===0) return;
+    const pos=nodePos(NODES[i].angle);
+    const dx=pos.x-CX, dy=pos.y-CY, d=Math.hypot(dx,dy);
+    const ux=dx/d, uy=dy/d;
+    const x1=CX+ux*CTR_R*1.12, y1=CY+uy*CTR_R*1.12;
+    const x2=pos.x-ux*NODE_R*1.18, y2=pos.y-uy*NODE_R*1.18;
+    ctx.beginPath(); ctx.moveTo(x1,y1);
+    ctx.lineTo(x1+(x2-x1)*ns.rev, y1+(y2-y1)*ns.rev);
+    ctx.strokeStyle=acA(0.20); ctx.lineWidth=1; ctx.stroke();
+  });
+
+  // ── Center logo ───────────────────────────────────────────────
+  ctx.shadowBlur=18; ctx.shadowColor='rgba(0,0,0,0.09)';
+  drawRR(CX,CY,CTR_R*2,CTR_R*2,CTR_R*0.35,W);
+  ctx.shadowBlur=0;
+  drawLogo(CX,CY,CTR_R);
+
+  // ── Integration nodes — drift in from outside ─────────────────
+  NODES.forEach((n,i)=>{
+    const ns=nState[i]; if(ns.rev===0) return;
+    const pos=nodePos(n.angle);
+    const rad=(n.angle-90)*Math.PI/180;
+    // Drift: start 1.6 node-radii further out, settle to final pos
+    const drift=(1-ns.rev)*NODE_R*1.6;
+    const ox=pos.x+Math.cos(rad)*drift;
+    const oy=pos.y+Math.sin(rad)*drift;
+
+    ctx.save(); ctx.globalAlpha*=ns.rev;
+    ctx.shadowBlur=10; ctx.shadowColor='rgba(0,0,0,0.11)';
+    drawRR(ox,oy,NODE_R*2,NODE_R*2,NODE_R*0.34,n.bg);
+    ctx.shadowBlur=0;
+    drawIcon(i,ox,oy,NODE_R);
+    ctx.restore();
+
+    // ── Label: always below the icon in screen space ──────────
+    if(ns.lblA>0){
+      const fs   = Math.min(W2,H2) * 0.022;
+      const gap  = NODE_R * 0.65;   // consistent gap from icon bottom edge
+      const lx   = pos.x;
+      const ly   = pos.y + NODE_R + gap;   // pos.y = icon centre, +NODE_R = icon bottom
+
+      ctx.save(); ctx.globalAlpha *= ns.lblA;
+      ctx.textAlign    = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillStyle    = SUB;
+      ctx.font         = `500 ${fs}px "DM Sans",sans-serif`;
+      ctx.fillText(n.label, lx, ly);
+      ctx.fillStyle    = MU;
+      ctx.font         = `400 ${fs * 0.76}px "DM Sans",sans-serif`;
+      ctx.fillText(n.sub, lx, ly + fs * 1.3);
+      ctx.restore();
+    }
+  });
+
+  ctx.restore();
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+</script>
+</body></html>
